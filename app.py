@@ -40,6 +40,15 @@ def upload_file():
 
         # load the example image and convert it to grayscale
         image = cv2.imread(filepath)
+        filepathfix = ''
+        if filepath.endswith('.tif'):
+            im = Image.open(filepath)
+            filenamefix = filepath.rsplit('.',1)[0]+'.jpg'
+            filenamefix = filenamefix.rsplit('/',1)[1]
+            print(filenamefix)
+            filepathfix = os.path.join(app.config['UPLOAD_FOLDER'], filenamefix)
+            out = im.convert("RGB")
+            out.save(filepathfix, "JPEG", quality=80)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # apply thresholding to preprocess the image
@@ -60,7 +69,8 @@ def upload_file():
 
         # remove the processed image
         os.remove(ofilename)
-
+        if filenamefix != '':
+            filename = filenamefix
         return render_template("uploaded.html", displaytext=text, fname=filename)
 
 
