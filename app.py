@@ -40,7 +40,8 @@ def upload_file():
 
         # load the example image and convert it to grayscale
         image = cv2.imread(filepath)
-        filepathfix = ''
+        # handle tifs since they dont display in web post ocr process
+        filenamefix = ''
         if filepath.endswith('.tif'):
             im = Image.open(filepath)
             filenamefix = filepath.rsplit('.',1)[0]+'.jpg'
@@ -49,6 +50,7 @@ def upload_file():
             filepathfix = os.path.join(app.config['UPLOAD_FOLDER'], filenamefix)
             out = im.convert("RGB")
             out.save(filepathfix, "JPEG", quality=80)
+        # convert image to grayscale
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # apply thresholding to preprocess the image
@@ -65,7 +67,7 @@ def upload_file():
 
         # perform OCR on the processed image
         text = pytesseract.image_to_string(
-            Image.open(ofilename), lang="eng+ara")
+            Image.open(ofilename), lang="eng+ara+fra+rus+chi_sim")
 
         # remove the processed image
         os.remove(ofilename)
